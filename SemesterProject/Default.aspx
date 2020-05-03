@@ -27,6 +27,11 @@
                         <h2>Access your control system</h2>
                         <p class="lead text-muted">All the data will be encrypted</p>
                         </div>
+                    <div>
+                        <asp:RadioButton ID="radio_STD" runat="server"  Text="學生" GroupName="identity" />
+                         <asp:RadioButton ID="radio_PRO" runat="server"  Text="教授" GroupName="identity"/>
+                         <asp:RadioButton ID="radio_ADM" runat="server"  Text="管理員" GroupName="identity"/>
+                    </div>
                             <div class="form-group">
                                 <asp:TextBox type="text" ID="name" runat="server" class="form-control" placeholder="Name"></asp:TextBox>
                             </div>
@@ -79,6 +84,10 @@
     <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/feather-icons/4.7.3/feather.min.js"></script>
     <script src="js/scripts.js"></script>
+    
+    
+     
+         <asp:Label ID="Label1" runat="server" Text="Label"></asp:Label>
     
     
      
