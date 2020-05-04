@@ -12,7 +12,7 @@ using System.Data.SqlClient;
 
 public partial class _Default : System.Web.UI.Page
 {
-    public  string strConn = "Data Source=DESKTOP-9SL6SMA\\A05050121;Initial Catalog=Lab;Integrated Security=True;User ID=Test;Password=test";
+    public  string strConn = "Data Source=AA201-32\\A05050121;Initial Catalog=Lab;Integrated Security=True;User ID=Test;Password=test";
     public SqlConnection myConn;
     public string strComm;
 
