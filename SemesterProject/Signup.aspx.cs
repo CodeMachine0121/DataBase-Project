@@ -2,30 +2,21 @@
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
+using System.Reflection.Emit;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using Label = System.Web.UI.WebControls.Label;
 
 public partial class Signup : System.Web.UI.Page
 {
 
-    public static string in_name;
-    public static string in_mail;
-    public static string in_birth;
-    public static string in_cellphone;
-    public static int in_total_credit;
-    public static string in_password;
-    public static string in_address;
-    public static string in_id;
-    public string strConn = "Data Source=AA201-32\\A05050121;Initial Catalog=vr;Integrated Security=True;User ID=Test;Password=test";
+    public string strConn = "Data Source=DESKTOP-9SL6SMA\\A05050121;Initial Catalog=Lab;Integrated Security=True;User ID=Test;Password=mcuite";
     public SqlConnection myConn;
     public string strComm;
-
+    public MyFunctions myFunc = new MyFunctions();
     protected void Page_Load(object sender, EventArgs e)
     {
-
-        Label label = FindControl("Label1") as Label; // debug tool
-
 
         myConn = new SqlConnection(strConn);
         myConn.Open();
@@ -34,8 +25,6 @@ public partial class Signup : System.Web.UI.Page
 
     protected void Register_Click(object sender, EventArgs e)
     {
-        strComm = "INSERT INTO [dbo].[Student]([std_ID],[Birth],[Name],[Cellphone],[Password],[Address],[Email]) VALUES";
-
         //debug tool
         Label label = FindControl("Label1") as Label;
 
@@ -43,25 +32,31 @@ public partial class Signup : System.Web.UI.Page
         TextBox name = FindControl("name") as TextBox;
         TextBox email = FindControl("email") as TextBox;
         TextBox password = FindControl("password") as TextBox;
-        TextBox birth = FindControl("birth") as TextBox;
-        TextBox address = FindControl("address") as TextBox;
-        Get_User_Data(in_id, name.Text, email.Text, password.Text, birth.Text, address.Text);
+
+        string in_name=name.Text;
+        string in_mail = email.Text;
+        string in_cellphone = cellphone.Text;
+        string in_password = myFunc.SHA256( password.Text);
+        string in_id = id.Text;
+        int in_total_credit = 0;
 
         RadioButton radio_STD = FindControl("radio_STD") as RadioButton;
         RadioButton radio_PRO = FindControl("radio_PRO") as RadioButton;
         RadioButton radio_ADM = FindControl("radio_ADM") as RadioButton;
 
-        bool is_std = false, is_pro = false, is_adm = false;
+        bool is_std = false, is_pro = false;
+        string command="";
+        int status;
         if (radio_STD.Checked)
         {
-            strComm += "(" + in_id + "," + in_birth + "," + in_name + "," + in_cellphone + "," + in_password + "," + in_address + "," + in_mail + ");"; ;
-            is_std = true;
+            command = "INSERT INTO [dbo].[Student]([std_ID],[total_Credit],[Name],[Cellphone],[Password],[Email]) VALUES('" + in_id + "',0,'" + in_name + "','" + in_cellphone + "','" + in_password + "','" + in_mail + "');";
+            status = 0;   
         }
         else if (radio_PRO.Checked)
         {
+            command = "INSERT INTO [dbo].[Professor] ([pro_ID],[Name],[email],[Cellphone],[Password]) VALUES('" +in_id + "','" + in_name +"','" + in_mail+ "','" + in_cellphone + "','" + in_password + "');";
 
-
-            is_pro = true;
+            status = 1;
         }
         else
         {
@@ -69,23 +64,45 @@ public partial class Signup : System.Web.UI.Page
             return;
         }
 
-        SqlCommand reader = new SqlCommand(strComm, myConn);
+        if (IsExist(in_id,status)){
+            // account already exist
+            label.Text = "該學號已註冊";
+            return;
+        }
+        
+        
 
-        SqlDataReader data = reader.ExecuteReader();
-        label.Text = data.ToString();
+        SqlCommand reader = new SqlCommand(command, myConn);
+        reader.ExecuteNonQuery();
+ 
+        Response.Redirect("Default.aspx");
 
     }
-
-    public static void Get_User_Data(string id, string name, string email, string password, string birth, string address)
+    
+    public bool IsExist(string id,int status)
     {
-        in_id = id;
-        in_name = name;
-        in_mail = email;
-        in_password = password;
-        in_birth = birth;
-        in_address = address;
+        string command = "";
+        // 0:std, 1:pro
+        if (status == 0)
+            command = "select count(1) from Student where std_ID = '" + id + "';"; 
+        else
+            command = "select count(1) from Professor where pro_ID = '" + id + "';";
 
+        SqlCommand scalar = new SqlCommand(command, myConn);
+
+        int UserExist = (int) scalar.ExecuteScalar();
+
+        if (UserExist == 0)
+        {
+            return false;
+        }
+        else
+        {
+            return true;
+        }
     }
+   
 
+   
 }
  

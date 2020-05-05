@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Cryptography;
-using System.Text;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
@@ -12,10 +10,11 @@ using System.Data.SqlClient;
 
 public partial class _Default : System.Web.UI.Page
 {
-    public  string strConn = "Data Source=AA201-32\\A05050121;Initial Catalog=Lab;Integrated Security=True;User ID=Test;Password=test";
+    public  string strConn = "Data Source=DESKTOP-9SL6SMA\\A05050121;Initial Catalog=Lab;Integrated Security=True;User ID=Test;Password=test";
     public SqlConnection myConn;
     public string strComm;
 
+    public MyFunctions myfunc = new MyFunctions();
 
     protected void Page_Load(object sender, EventArgs e)
     {
@@ -40,7 +39,7 @@ public partial class _Default : System.Web.UI.Page
         bool is_std=false, is_pro=false, is_adm = false;
 
         if(name.Text.Trim(' ') == "" || password.Text.Trim(' ') == ""){return;}
-        string Hash_password = SHA256(password.Text);
+        string Hash_password = myfunc.SHA256(password.Text);
 
         if (radio_STD.Checked)
         {
@@ -103,19 +102,7 @@ public partial class _Default : System.Web.UI.Page
     }
 
 
-    public string SHA256(string data)
-    {
-        byte[] bytes = Encoding.UTF8.GetBytes(data);
-        byte[] hash = SHA256Managed.Create().ComputeHash(bytes);
-
-        StringBuilder builder = new StringBuilder();
-        for (int i=0;i<hash.Length; i++)
-        {
-            builder.Append(hash[i].ToString("X2"));
-        }
-        return builder.ToString().ToLower();
-
-    }
+   
 
 
 }

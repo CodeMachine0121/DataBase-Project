@@ -29,7 +29,7 @@
                         </div>
 
                     <div>
-                         <asp:Label ID="Label1" runat="server" Text="Label"></asp:Label>
+                         <asp:Label ID="Label1" runat="server" ForeColor="Red" ></asp:Label>
                     </div>
 
                     <div>
@@ -44,18 +44,12 @@
                                 <asp:TextBox type="text" ID="name" runat="server" class="form-control" placeholder="Name"></asp:TextBox>
                             </div>
                             <div class="form-group">
-                                <asp:TextBox type="email" ID="email" runat="server" class="form-control" placeholder="Email"></asp:TextBox>
+                                <asp:TextBox type="text" ID="email" runat="server" class="form-control" placeholder="Email"></asp:TextBox>
                             </div>
                             <div class="form-group">
                                 <asp:TextBox type="password" ID="password" runat="server" class="form-control" placeholder="Password"></asp:TextBox>
                             </div>
-                            <div class="form-group">
-                                <asp:TextBox type="text" ID="birth" runat="server" class="form-control" placeholder="birth"></asp:TextBox>
-                            </div>
                             
-                            <div class="form-group">
-                                <asp:TextBox type="text" ID="address" runat="server" class="form-control" placeholder="Address"></asp:TextBox>
-                            </div>
                             <div class="form-group">
                                 <asp:TextBox type="text" ID="cellphone" runat="server" class="form-control" placeholder="Cellphone"></asp:TextBox>
                             </div>
