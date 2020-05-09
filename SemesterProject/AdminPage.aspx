@@ -1,4 +1,4 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" CodeFile="Default.aspx.cs" Inherits="_Default" %>
+﻿<%@ Page Language="C#" AutoEventWireup="true" CodeFile="AdminPage.aspx.cs" Inherits="AdminPage" %>
 
 <!DOCTYPE html>
 
@@ -19,36 +19,43 @@
 
 </head>
 <body>
+    <h2>
+        加入刪除課程 </h2>
+    <h5>刪除只需填寫課程編號及名稱即可</h5>
     <form id="form1" runat="server">
-        
-         <div class="col-md-5 pl-md-5">
+           
+        <div class="col-md-5 pl-md-5">
                 <div class="card">
                     <div class="card-body py-md-4">
-                        <h2>Access your control system</h2>
                         <p class="lead text-muted">All the data will be encrypted</p>
-                         <asp:Label ID="Label1" runat="server" BorderColor="Red" ForeColor="Red"></asp:Label>
+                        <h3>       <asp:Label ID="text" runat="server" Text="Label"></asp:Label>  </h3>
                         </div>
-                    <div>
-                        <asp:RadioButton ID="radio_STD" runat="server"  Text="學生" GroupName="identity" />
-                         <asp:RadioButton ID="radio_PRO" runat="server"  Text="教授" GroupName="identity"/>
-                         <asp:RadioButton ID="radio_ADM" runat="server"  Text="管理員" GroupName="identity"/>
-                    </div>
+     
                             <div class="form-group">
-                                <asp:TextBox type="text" ID="name" runat="server" class="form-control" placeholder="Name"></asp:TextBox>
+                                <asp:TextBox type="text" ID="Cname" runat="server" class="form-control" placeholder="課程"></asp:TextBox>
                             </div>
                           
                             <div class="form-group">
-                                <asp:TextBox type="password" ID="password" runat="server" class="form-control" placeholder="Password"></asp:TextBox>
+                                <asp:TextBox type="text" ID="CID" runat="server" class="form-control" placeholder="課程編號"></asp:TextBox>
                             </div>
-                    
+                            
+                            <div class="form-group">
+                                <asp:TextBox type="text" ID="CPro" runat="server" class="form-control" placeholder="授課教授(編號)"></asp:TextBox>
+                            </div>
+                             <div class="form-group">
+                                <asp:TextBox type="text" ID="Croom" runat="server" class="form-control" placeholder="授課教室"></asp:TextBox>
+                            </div>
+                            <div class="form-group">
+                                <asp:TextBox type="text" ID="Ccredit" runat="server" class="form-control" placeholder="學分"></asp:TextBox>
+                            </div>
+
                        
                             <div class="d-flex flex-row align-items-center justify-content-between">
-                                <asp:Button ID="Sign_up" class="btn btn-primary" runat="server" Text="Sign up" OnClick="Sign_up_Click" />
-                                 <asp:Button ID="Sign_in" class="btn btn-primary" runat="server" Text="Sign in" OnClick="Sign_in_Click" />         
+                                <asp:Button ID="CAdd" class="btn btn-primary" runat="server" Text="加入" OnClick="CAdd_Click" />
+                                 <asp:Button ID="CDelete" class="btn btn-primary" runat="server" Text="刪除" OnClick="CDelete_Click" />         
                             </div>
 
                                      
-
                         </div>
                     </div>
             </div>
@@ -85,13 +92,7 @@
     <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/feather-icons/4.7.3/feather.min.js"></script>
     <script src="js/scripts.js"></script>
-    
-    
-     
-       
-    
-    
-     
+  
     </form>
-    </body>
+</body>
 </html>

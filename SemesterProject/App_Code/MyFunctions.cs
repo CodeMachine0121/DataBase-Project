@@ -19,7 +19,7 @@ public class MyFunctions
 
     public string SHA256(string data)
     {
-        byte[] bytes = Encoding.UTF8.GetBytes(data);
+        byte[] bytes = Encoding.UTF8.GetBytes((string)data);
         byte[] hash = SHA256Managed.Create().ComputeHash(bytes);
 
         StringBuilder builder = new StringBuilder();

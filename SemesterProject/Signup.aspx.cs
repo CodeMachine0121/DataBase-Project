@@ -11,7 +11,7 @@ using Label = System.Web.UI.WebControls.Label;
 public partial class Signup : System.Web.UI.Page
 {
 
-    public string strConn = "Data Source=DESKTOP-9SL6SMA\\A05050121;Initial Catalog=Lab;Integrated Security=True;User ID=Test;Password=mcuite";
+    public string strConn = "Data Source=DESKTOP-9SL6SMA\\A05050121;Initial Catalog=Lab2;Integrated Security=True;User ID=Test;Password=mcuite";
     public SqlConnection myConn;
     public string strComm;
     public MyFunctions myFunc = new MyFunctions();
@@ -20,13 +20,13 @@ public partial class Signup : System.Web.UI.Page
 
         myConn = new SqlConnection(strConn);
         myConn.Open();
-
+        
+        Session["ID"] = myFunc.SHA256((string)Session.SessionID);
     }
 
     protected void Register_Click(object sender, EventArgs e)
     {
-        //debug tool
-        Label label = FindControl("Label1") as Label;
+        Label text = FindControl("Label1") as Label;
 
         TextBox id = FindControl("id") as TextBox;
         TextBox name = FindControl("name") as TextBox;
@@ -38,35 +38,37 @@ public partial class Signup : System.Web.UI.Page
         string in_cellphone = cellphone.Text;
         string in_password = myFunc.SHA256( password.Text);
         string in_id = id.Text;
-        int in_total_credit = 0;
+  
+       
 
         RadioButton radio_STD = FindControl("radio_STD") as RadioButton;
         RadioButton radio_PRO = FindControl("radio_PRO") as RadioButton;
-        RadioButton radio_ADM = FindControl("radio_ADM") as RadioButton;
 
-        bool is_std = false, is_pro = false;
+        string SessionID = myFunc.SHA256((string)Session["ID"]); // 重複性
+
         string command="";
         int status;
         if (radio_STD.Checked)
         {
-            command = "INSERT INTO [dbo].[Student]([std_ID],[total_Credit],[Name],[Cellphone],[Password],[Email]) VALUES('" + in_id + "',0,'" + in_name + "','" + in_cellphone + "','" + in_password + "','" + in_mail + "');";
+            command = "INSERT INTO [dbo].[Student]([std_ID],[total_Credit],[Name],[Cellphone],[Password],[Email],[Session_ID]) VALUES('" + in_id + "',0,'" + in_name + "','" + in_cellphone + "','" + in_password + "','" + in_mail +"','"+SessionID+ "');";
             status = 0;   
         }
         else if (radio_PRO.Checked)
         {
-            command = "INSERT INTO [dbo].[Professor] ([pro_ID],[Name],[email],[Cellphone],[Password]) VALUES('" +in_id + "','" + in_name +"','" + in_mail+ "','" + in_cellphone + "','" + in_password + "');";
+            command = "INSERT INTO [dbo].[Professor] ([pro_ID],[Name],[email],[Session_ID],[Cellphone],[Password]) VALUES('" + in_id + "','" + in_name +"','" + in_mail+ "','" + SessionID + "','" + in_cellphone + "','" + in_password +"');";
+            //Response.Write("<script>alert('session:"+SessionID+"\npassword:"+in_password+" ')</script>");
 
             status = 1;
         }
         else
         {
-            label.Text = "請先行確認身分";
+            Label1.Text = "請先確認身分";
             return;
         }
 
         if (IsExist(in_id,status)){
             // account already exist
-            label.Text = "該學號已註冊";
+            Label1.Text = "該學號已被註冊";
             return;
         }
         
@@ -74,7 +76,7 @@ public partial class Signup : System.Web.UI.Page
 
         SqlCommand reader = new SqlCommand(command, myConn);
         reader.ExecuteNonQuery();
- 
+        
         Response.Redirect("Default.aspx");
 
     }

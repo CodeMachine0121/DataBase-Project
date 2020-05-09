@@ -7,28 +7,29 @@ using System.Web.UI.WebControls;
 using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
+using System.Runtime.InteropServices;
+using System.Security.Policy;
 
 public partial class _Default : System.Web.UI.Page
 {
-    public  string strConn = "Data Source=DESKTOP-9SL6SMA\\A05050121;Initial Catalog=Lab;Integrated Security=True;User ID=Test;Password=test";
-    public SqlConnection myConn;
-    public string strComm;
+    public  string strConn = "Data Source=DESKTOP-9SL6SMA\\A05050121;Initial Catalog=Lab2;Integrated Security=True;User ID=Test;Password=mcuite;" ;
 
     public MyFunctions myfunc = new MyFunctions();
 
     protected void Page_Load(object sender, EventArgs e)
-    {
-        
-        myConn = new SqlConnection(strConn);
+    {    
 
-        myConn.Open();
-        
+     // 辨認使用者 資料庫要再多新增一欄 放session -> H(Password)
+
+        Session["ID"] = myfunc.SHA256((string)Session.SessionID);
+
     }
 
     protected void Sign_in_Click(object sender, EventArgs e)
     {
-        Label label1 = FindControl("Label1") as Label; // debug tool
         
+        Label label = FindControl("Label1") as Label; // tool
+
         RadioButton radio_STD = FindControl("radio_STD") as RadioButton;
         RadioButton radio_PRO = FindControl("radio_PRO") as RadioButton;
         RadioButton radio_ADM = FindControl("radio_ADM") as RadioButton;
@@ -37,58 +38,64 @@ public partial class _Default : System.Web.UI.Page
         TextBox password = FindControl("password") as TextBox;
 
         bool is_std=false, is_pro=false, is_adm = false;
+        string strComm;
+        
 
-        if(name.Text.Trim(' ') == "" || password.Text.Trim(' ') == ""){return;}
+        if(name.Text.Trim(' ') == "" || password.Text.Trim(' ') == "") { Response.Write("<script>alert('賣亂')</script>"); }
         string Hash_password = myfunc.SHA256(password.Text);
-
+        
+        // 取得身分
         if (radio_STD.Checked)
         {
-            strComm = "select password from student where student.std_ID='" + name.Text + "';";
+            strComm = "select Password from student where Student.std_ID='" + name.Text + "';";
             is_std = true;
         }
         else if( radio_PRO.Checked)
         {
-            strComm = "select password from Professor where Professor.pro_ID='" + name.Text + "';";
+            strComm = "select Password from Professor where pro_ID='" + name.Text + "';";
             is_pro = true;
         }
         else if( radio_ADM.Checked )
         {
-            strComm = "select password from Admin where Admin.adm_ID='" + name.Text + "';";
+            strComm = "select Password from Admin where Admin.adm_ID='" + name.Text + "';";
             is_adm = true;
         }
         else
         {
-            label1.Text = "請先行確認身分";
+            label.Text="請先確認身分";
+            name.Text = "";
+            password.Text = "";
             return;
         }
-        label1.Text = strComm;
-        SqlCommand reader = new SqlCommand (strComm, myConn);
-
-        SqlDataReader data = reader.ExecuteReader();
-
-        try{
-            string data_password = data["Password"].ToString();
-        }
-        catch
-        {
-            label1.Text = "帳號或密碼錯誤";
-        }
+        
+     // 檢查密碼
        
-        if (data.Read())
+        if (!Check_Password(Hash_password,strComm))
         {
-            if(data["Password"].ToString() == Hash_password)
-            {
-                if (is_std)
-                    label1.Text = "student";
-                else if (is_pro)
-                    label1.Text = "professor";
-                else if (is_adm)
-                    label1.Text = "admin";        
-            }
-            else
-            {
-                label1.Text = "帳號或密碼錯誤";
-            }
+            Response.Write("<script>alert('帳號或密碼錯誤')</script>");
+            return;
+        }
+
+
+        // 把Session 塞入Table
+        if (is_std)
+        {
+           
+            Update_Session("UPDATE Student SET Session_ID = '" + Session["ID"] + "' where std_ID ='" + name.Text + "';");
+            Response.Redirect("Select.aspx");
+        }
+        else if (is_pro)
+        {
+            // 還沒做
+           
+            Update_Session("UPDATE Professor SET Session_ID = '" + Session["ID"] + "' where pro_ID ='" + name.Text + "';");
+            Response.Write("<script>alert('professor')</script>");
+        }
+        else if (is_adm)
+        {
+            Update_Session("UPDATE Admin SET Session_ID = '" + (string)Session["ID"] + "' where adm_ID ='" + name.Text + "';");
+            
+            Response.Redirect("AdminPage.aspx");
         }
         name.Text ="";
         password.Text = "";
@@ -102,7 +109,50 @@ public partial class _Default : System.Web.UI.Page
     }
 
 
-   
+   public  void Update_Session(string strComm)
+    {
+        SqlConnection myConn = new SqlConnection(strConn);
+        myConn.Open();
 
+        SqlCommand reader = new SqlCommand(strComm, myConn);
 
+        reader.ExecuteNonQuery();
+
+        reader.Dispose();
+        myConn.Close();
+        myConn.Dispose();
+    }
+
+   public bool Check_Password(string password,string command)
+    {
+        SqlConnection myConn = new SqlConnection(strConn);
+
+        myConn.Open();
+
+        SqlCommand reader = new SqlCommand(command, myConn);
+
+        SqlDataReader data = reader.ExecuteReader();
+        while (data.Read())
+        {
+            if (data["Password"].ToString() == password)
+            {
+
+                reader.Dispose();
+                myConn.Close();
+                myConn.Dispose();
+                return true;
+            }
+            else
+            {
+                reader.Dispose();
+                myConn.Close();
+                myConn.Dispose();
+                return false;
+            }
+        }
+
+        return false;
+
+        
+    }
 }
