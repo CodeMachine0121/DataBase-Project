@@ -108,7 +108,7 @@ public partial class _Default : System.Web.UI.Page
         Response.Redirect("Signup.aspx");
     }
 
-
+    // SQL cmd
    public  void Update_Session(string strComm)
     {
         SqlConnection myConn = new SqlConnection(strConn);

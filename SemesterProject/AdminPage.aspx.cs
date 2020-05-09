@@ -12,8 +12,8 @@ public partial class AdminPage : System.Web.UI.Page
 
 
     public string strConn = "Data Source=DESKTOP-9SL6SMA\\A05050121;Initial Catalog=Lab2;Integrated Security=True;User ID=Test;Password=mcuite";
-    public SqlConnection myConn;
-    public string strComm;
+    
+   
     public MyFunctions myFunc = new MyFunctions();
     public string Session_ID;
     protected void Page_Load(object sender, EventArgs e)
@@ -22,8 +22,7 @@ public partial class AdminPage : System.Web.UI.Page
 
         Session_ID = (string)Session["ID"];
         
-        myConn = new SqlConnection(strConn);
-        myConn.Open();
+        
        
         if (!Is_Session_Exist(Session_ID))
         {
@@ -38,6 +37,7 @@ public partial class AdminPage : System.Web.UI.Page
 
     protected void CAdd_Click(object sender, EventArgs e)
     {
+
         TextBox CID = FindControl("CID") as TextBox;
         TextBox CName = FindControl("Cname") as TextBox;
         TextBox CPro = FindControl("CPro") as TextBox;
@@ -55,26 +55,24 @@ public partial class AdminPage : System.Web.UI.Page
         }
         else
         {
-            // 先有老師才有課
-            try
-            {
+             //先有老師才有課
+           try
+           {
                 
                 string command = "INSERT INTO [dbo].[Courses]([pro_ID],[CID] ,[Name],[Credit],[Classroom]) VALUES('" + cpro + "','" + cid + "','" + cname + "','" + ccredit + "','" + croom + "');";
-                SqlCommand reader = new SqlCommand(command, myConn);
-                reader.ExecuteNonQuery();
+
+                SQL_cmd(command);
 
                 // 需額外新增 Table 紀錄有哪些學生
-
                 command = "CREATE TABLE "+cname+ " ( std_ID VARCHAR(8) NOT NULL ) ;";
-                reader = new SqlCommand(command, myConn);
-                reader.ExecuteNonQuery();
+                SQL_cmd(command); 
 
                 Response.Write("<script>alert('成功寫入')</script>");
             }
             catch
             {
-               Response.Write("<script>alert('資料庫出現問題')</script>");
-            }
+             Response.Write("<script>alert('資料庫出現問題')</script>");
+           }
             CID.Text = "";
             CName.Text = "";
             CPro.Text = "";
@@ -86,6 +84,7 @@ public partial class AdminPage : System.Web.UI.Page
 
     protected void CDelete_Click(object sender, EventArgs e)
     {
+
         TextBox CID = FindControl("CID") as TextBox;
         TextBox CName = FindControl("Cname") as TextBox;
         string cid = CID.Text;
@@ -100,12 +99,10 @@ public partial class AdminPage : System.Web.UI.Page
         try
         {
             string command = "DELETE FROM [dbo].[Courses] WHERE CID = '" + cid + "';";
-            SqlCommand reader = new SqlCommand(command, myConn);
-            reader.ExecuteNonQuery();
+            SQL_cmd(command);
 
             command = "DROP TABLE " + cname + ";";
-            reader = new SqlCommand(command, myConn);
-            reader.ExecuteNonQuery();
+            SQL_cmd(command);
             Response.Write("<script>alert('成功移除該課程')</script>");
         }
         catch
@@ -120,6 +117,10 @@ public partial class AdminPage : System.Web.UI.Page
     public bool Is_Course_Exist(string cid)
     {
 
+        SqlConnection myConn;
+        myConn = new SqlConnection(strConn);
+        myConn.Open();
+
         string command = "select count(1) from courses where CID = '"+cid+"';";
         SqlCommand scalar = new SqlCommand(command, myConn);
 
@@ -127,10 +128,16 @@ public partial class AdminPage : System.Web.UI.Page
 
         if (CourseExist == 0)
         {
+            scalar.Dispose();
+            myConn.Close();
+            myConn.Dispose();
             return false;
         }
         else
         {
+            scalar.Dispose();
+            myConn.Close();
+            myConn.Dispose();
             return true;
         }
     }
@@ -139,6 +146,9 @@ public partial class AdminPage : System.Web.UI.Page
     public bool Is_Session_Exist(string id)
     {
         string command = "";
+        SqlConnection myConn;
+        myConn = new SqlConnection(strConn);
+        myConn.Open();
 
         command = "select count(1) from Admin where Session_ID = '" + id + "';";
 
@@ -148,12 +158,31 @@ public partial class AdminPage : System.Web.UI.Page
 
         if (UserExist == 0)
         {
+            scalar.Dispose();
+            myConn.Close();
+            myConn.Dispose();
             return false;
         }
         else
         {
+            scalar.Dispose();
+            myConn.Close();
+            myConn.Dispose();
             return true;
         }
     }
 
+    public void SQL_cmd(string command)
+    {
+        SqlConnection myConn;
+        myConn = new SqlConnection(strConn);
+        myConn.Open();
+        SqlCommand reader = new SqlCommand(command, myConn);
+
+        reader.ExecuteNonQuery();
+        reader.Dispose();
+        myConn.Close();
+        myConn.Dispose();
+
+    }
 }
