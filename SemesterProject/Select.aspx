@@ -5,30 +5,71 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head runat="server">
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-    <title></title>
-    <style type="text/css">
-        .auto-style1 {
-            margin-top: 0px;
-        }
-    </style>
+     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+
+
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Crew - Free Bootstrap 4 Upcoming Landing Page Template</title>
+    <meta name="description" content="Crew is a beautiful Bootstrap 4 template for upcoming landing pages."/>
+
+    <!--Google font-->
+    <link href="https://fonts.googleapis.com/css?family=K2D:300,400,500,700,800" rel="stylesheet">
+
+    <!-- Bootstrap CSS / Color Scheme -->
+    <link rel="stylesheet" href="css/bootstrap.css">
+
 </head>
 <body>
     <form id="form1" runat="server">
-        <h2>選課系統</h2>
-        <h3> 輸入課程編號: </h3>
-        <div>
-            <asp:Label ID="text" runat="server" Text="Label"></asp:Label>
 
+         <div class="col-md-5 pl-md-5">
+                <div class="card">
+                    <div class="card-body py-md-4">
+                        <h2>選課系統</h2>
+                        <p> 輸入課程編號: </p>
+                         <asp:Label ID="Label1" runat="server" BorderColor="Red" ForeColor="Red"></asp:Label>
+                          
+                        <div class="form-group">
+                                <asp:TextBox type="text" ID="CID" runat="server" class="form-control" placeholder="課程編號"></asp:TextBox>
+                        </div>
+                        <div class="d-flex flex-row align-items-center justify-content-between">
+                                <asp:Button ID="Confirm" class="btn btn-primary" runat="server" Text="確定" OnClick="Confirm_Click"  />
+                                 <asp:Button ID="Delete" class="btn btn-primary" runat="server" Text="刪除該課程" OnClick="Delete_Click" />         
+                         </div>
+                    </div>
+                </div>
         </div>
-        <asp:TextBox ID="C_ID" runat="server" placeholder="Course ID" CssClass="auto-style1"></asp:TextBox> <br>
-        <asp:Button ID="submit" runat="server" Text="Submit" />
-        
-        <asp:Table ID="Table1" runat="server" Border=9>
-            
-        </asp:Table>
-        
-        <br>
-        
+<!--navigation-->
+    <section class="bh-white py-3">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-12 text-center">
+                    <a href="Detail.html" class="heading-brand text-primary">Detail</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!--footer-->
+    <footer>
+        <div class="container">
+            <div class="row">
+                <div class="col-12 text-center">
+                    <ul class="list-inline">
+                        <li class="list-inline-item"><a href="About.html">About</a></li>
+                        <li class="list-inline-item"><a href="Privacy.html">Privacy</a></li>
+                        <li class="list-inline-item"><a href="Connection.html">Connection</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/feather-icons/4.7.3/feather.min.js"></script>
+    <script src="js/scripts.js"></script>
+    
     </form>
     
 </body>

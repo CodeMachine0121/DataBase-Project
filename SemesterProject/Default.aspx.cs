@@ -12,7 +12,7 @@ using System.Security.Policy;
 
 public partial class _Default : System.Web.UI.Page
 {
-    public  string strConn = "Data Source=DESKTOP-9SL6SMA\\A05050121;Initial Catalog=Lab2;Integrated Security=True;User ID=Test;Password=mcuite;" ;
+    public string strConn = System.Web.Configuration.WebConfigurationManager.ConnectionStrings["connectionWord"].ConnectionString;
 
     public MyFunctions myfunc = new MyFunctions();
 

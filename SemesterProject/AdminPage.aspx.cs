@@ -11,7 +11,7 @@ public partial class AdminPage : System.Web.UI.Page
 {
 
 
-    public string strConn = "Data Source=DESKTOP-9SL6SMA\\A05050121;Initial Catalog=Lab2;Integrated Security=True;User ID=Test;Password=mcuite";
+    public string strConn = System.Web.Configuration.WebConfigurationManager.ConnectionStrings["connectionWord"].ConnectionString;
     
    
     public MyFunctions myFunc = new MyFunctions();
@@ -43,42 +43,53 @@ public partial class AdminPage : System.Web.UI.Page
         TextBox CPro = FindControl("CPro") as TextBox;
         TextBox Croom = FindControl("Croom") as TextBox;
         TextBox Ccredit = FindControl("Ccredit") as TextBox;
+        TextBox CTime = FindControl("CTime") as TextBox;
+            
         string cid = CID.Text;
         string cname = CName.Text;
         string cpro = CPro.Text;
         string croom = Croom.Text;
         string ccredit = Ccredit.Text;
+        string ctime = CTime.Text;
         bool is_course_exist = Is_Course_Exist(cid);
+
+        string adm_id = Get_Admin_ID("select adm_ID from Admin where Session_ID = '" + (string)Session_ID + "';");
+
+        if (adm_id == null)
+        {
+            Response.Write("<script>alert('資料庫發生錯誤 歹勢啦')</script>");
+            return;
+        }
+
         if (is_course_exist)
         {
             Response.Write("<script>alert('該課程已存在')</script>");
+            return;
         }
         else
         {
-             //先有老師才有課
-           try
-           {
+             
+            try
+            {
                 
-                string command = "INSERT INTO [dbo].[Courses]([pro_ID],[CID] ,[Name],[Credit],[Classroom]) VALUES('" + cpro + "','" + cid + "','" + cname + "','" + ccredit + "','" + croom + "');";
-
+                string command = "INSERT INTO [dbo].[Courses]([adm_ID],[pro_ID],[CID],[Ctime] ,[Name],[Credit],[Classroom]) VALUES('"+adm_id+"','" + cpro + "','" + cid + "','" +ctime+"','"+ cname + "','" + ccredit + "','" + croom + "');";
                 SQL_cmd(command);
 
-                // 需額外新增 Table 紀錄有哪些學生
-                command = "CREATE TABLE "+cname+ " ( std_ID VARCHAR(8) NOT NULL ) ;";
-                SQL_cmd(command); 
+                // 需額外新增 Table 紀錄有哪些學生  [*] 使用關聯性來帶入 Function 在 選課page
+               // command = "CREATE TABLE "+cname+ " ( std_ID VARCHAR(8) NOT NULL, std_Name VARCHAR(80) NOT NULL ) ALTER TABLE"+cname+" ADD CONSTRAINT Student_"+cname+" FOREIGN KEY(std_ID) REFERENCES Student(std_ID) ON DELETE NO ACTIONON UPDATE NO ACTION ; ";
 
                 Response.Write("<script>alert('成功寫入')</script>");
             }
             catch
             {
-             Response.Write("<script>alert('資料庫出現問題')</script>");
-           }
+                 Response.Write("<script>alert('先有教授才能有課')</script>");
+            }
             CID.Text = "";
             CName.Text = "";
             CPro.Text = "";
             Croom.Text = "";
-            Ccredit.Text = ""; 
-            
+            Ccredit.Text = "";
+            return;
         }
     }
 
@@ -121,7 +132,7 @@ public partial class AdminPage : System.Web.UI.Page
         myConn = new SqlConnection(strConn);
         myConn.Open();
 
-        string command = "select count(1) from courses where CID = '"+cid+"';";
+        string command = "select count(1) from Courses where CID = '"+cid+"';";
         SqlCommand scalar = new SqlCommand(command, myConn);
 
         int CourseExist = (int)scalar.ExecuteScalar();
@@ -172,6 +183,7 @@ public partial class AdminPage : System.Web.UI.Page
         }
     }
 
+    // None Query
     public void SQL_cmd(string command)
     {
         SqlConnection myConn;
@@ -184,5 +196,38 @@ public partial class AdminPage : System.Web.UI.Page
         myConn.Close();
         myConn.Dispose();
 
+    }
+
+
+    public string Get_Admin_ID(string command)
+    {
+        SqlConnection myConn;
+        myConn = new SqlConnection(strConn);
+        myConn.Open();
+        SqlCommand reader = new SqlCommand(command, myConn);
+        SqlDataReader data = reader.ExecuteReader();
+        if (data.Read())
+        {
+            string id = data["adm_ID"].ToString();
+            data.Close();
+            reader.Dispose();
+            myConn.Close();
+            myConn.Dispose();
+            return id;
+
+        }
+        else
+        {
+            data.Close();
+            reader.Dispose();
+            myConn.Close();
+            myConn.Dispose();
+            return null;
+        }
+    }
+
+    protected void Back_Click(object sender, EventArgs e)
+    {
+        Response.Redirect("Default.aspx");
     }
 }

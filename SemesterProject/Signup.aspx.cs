@@ -11,7 +11,7 @@ using Label = System.Web.UI.WebControls.Label;
 public partial class Signup : System.Web.UI.Page
 {
 
-    public string strConn = "Data Source=DESKTOP-9SL6SMA\\A05050121;Initial Catalog=Lab2;Integrated Security=True;User ID=Test;Password=mcuite";
+    public string strConn = System.Web.Configuration.WebConfigurationManager.ConnectionStrings["connectionWord"].ConnectionString;
     public SqlConnection myConn;
     public string strComm;
     public MyFunctions myFunc = new MyFunctions();
