@@ -86,10 +86,10 @@ public partial class _Default : System.Web.UI.Page
         }
         else if (is_pro)
         {
-            // 還沒做
+           
            
             Update_Session("UPDATE Professor SET Session_ID = '" + Session["ID"] + "' where pro_ID ='" + name.Text + "';");
-            Response.Write("<script>alert('professor')</script>");
+            Response.Redirect("Professor.aspx");
         }
         else if (is_adm)
         {

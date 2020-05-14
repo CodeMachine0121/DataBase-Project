@@ -34,7 +34,7 @@ public class MyFunctions
 
     }
 
-    // 取得使用者ID
+    //透過Session ID 取得使用者ID 
     public string Get_ID(string command, int status)
     {
         SqlConnection myConn;
@@ -71,9 +71,26 @@ public class MyFunctions
     }
 
 
-    
+    //透過教授編號取得 教授名稱
+    public string Get_Name_from_proID(string pro_ID)
+    {
+        string command = "select Name from professor where pro_ID = '" +pro_ID + "';";
 
+        SqlConnection myConn;
+        myConn = new SqlConnection(strConn);
+        myConn.Open();
 
+        SqlCommand reader = new SqlCommand(command, myConn);
+        SqlDataReader data = reader.ExecuteReader();
+
+        if (data.Read())
+            return data["Name"].ToString();
+        else
+            return null;
+
+    }
+
+    // 取得全部課程邊號
     public string[] Get_CID_from_Courses()
     {
         SqlConnection myConn;
@@ -106,16 +123,19 @@ public class MyFunctions
         return cid;
     }
 
-    public string[] Get_Course_By_StdID(string std_ID)
+    public string[] Get_Course_By_StdID(string ID)
     {
-
+        
+        string command;
 
         SqlConnection myConn;
         myConn = new SqlConnection(strConn);
         myConn.Open();
-
+        
         // how many courses had the student choosen
-        string command = "select count(1) from Course_Pool where ( std_ID = '" + std_ID + "');";
+        
+        command = "select count(1) from Course_Pool where ( std_ID = '" + ID + "');";
+
         SqlCommand scalar = new SqlCommand(command, myConn);
         int Amount_of_Courses = (int)scalar.ExecuteScalar();
         scalar.Dispose();
@@ -123,7 +143,7 @@ public class MyFunctions
         string[] cid = new string[Amount_of_Courses];
 
         // get Course id 
-        command = "select CID from Course_Pool where std_ID = '" + std_ID + "';";
+        command = "select CID from Course_Pool where std_ID = '" + ID + "';";
         SqlCommand reader = new SqlCommand(command, myConn);
         SqlDataReader data = reader.ExecuteReader();
 
@@ -169,6 +189,7 @@ public class MyFunctions
     }
 
 
+    // 透過課程標號 取得 教授名稱
     public string[] Get_Professor_Name(string[] cid)
     {
        
@@ -210,6 +231,45 @@ public class MyFunctions
 
         return cpro;
     }
+
+
+    // 透過教授編號取得 課程標號
+    public string[] Get_Course_By_ProID(string ID)
+    {
+        string command;
+
+        SqlConnection myConn;
+        myConn = new SqlConnection(strConn);
+        myConn.Open();
+
+        // how many courses had the student choosen
+
+        command = "select count(1) from Courses where ( pro_ID = '" + ID + "');";
+
+        SqlCommand scalar = new SqlCommand(command, myConn);
+        int Amount_of_Courses = (int)scalar.ExecuteScalar();
+        scalar.Dispose();
+
+
+        string[] cid = new string[Amount_of_Courses];
+
+        command = "select CID from Courses where pro_ID = '" + ID + "';";
+        SqlCommand reader = new SqlCommand(command, myConn);
+        SqlDataReader data = reader.ExecuteReader();
+
+        int i = 0;
+        while (data.Read())
+        {
+            cid[i++] = data["CID"].ToString();
+        }
+        data.Close();
+        reader.Dispose();
+        myConn.Close();
+        myConn.Dispose();
+        return cid;
+
+    }
+
 
     //取得上課教室
     public string[] Get_Courses_room(string[] cid)

@@ -166,11 +166,10 @@ public partial class Select : System.Web.UI.Page
         //Response.Write((ctime.Length - 2) / 2);
        // string[] time = new string[ ((ctime.Length - 2) / 2) *ctime.Length ]; // 算幾門課
         
-        Label label = FindControl("Label1") as Label;
 
         course = myFunc.Course_ID_Name_Change(course);
 
-        int end = 0;
+       
         for(int i=0; i<ctime.Length ; i++)
         {
             for (int j = 2; j < ctime[i].Length; j += 2)
