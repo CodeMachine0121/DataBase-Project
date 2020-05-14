@@ -28,11 +28,12 @@
                 <div class="card">
                     <div class="card-body py-md-4">
                         <p class="lead text-muted">All the data will be encrypted</p>
-                        <h3>       <asp:Label ID="text" runat="server" Text="Label"></asp:Label>  </h3>
+                        <h3>      </h3>
                         </div>
      
                             <div class="form-group">
-                                <asp:TextBox type="text" ID="Cname" runat="server" class="form-control" placeholder="課程"></asp:TextBox>
+                                <asp:TextBox type="text" ID="Cname" runat="server" class="form-control" placeholder="課程"></asp:TextBox> 
+                               
                             </div>
                           
                             <div class="form-group">
@@ -59,15 +60,19 @@
                             <div class="d-flex flex-row align-items-center justify-content-between">
                                 <asp:Button ID="CAdd" class="btn btn-primary" runat="server" Text="加入" OnClick="CAdd_Click" />
                                 <asp:Button ID="Back" class="btn btn-primary" runat="server" Text="返回" OnClick="Back_Click" />
-                                 <asp:Button ID="CDelete" class="btn btn-primary" runat="server" Text="刪除" OnClick="CDelete_Click" />         
+                                <asp:Button ID="Table" runat="server" class="btn btn-primary" Text="課程表" OnClick="Table_Click" ></asp:Button> 
+                                <asp:Button ID="CDelete" class="btn btn-primary" runat="server" Text="刪除" OnClick="CDelete_Click" /> 
+                                   
                             </div>
 
-                                     
+                              
+       
                         </div>
-                    </div>
             </div>
 
-  
+        
+
+           
 
     <!--navigation-->
     <section class="bh-white py-3">

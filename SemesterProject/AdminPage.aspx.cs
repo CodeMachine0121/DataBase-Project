@@ -79,6 +79,7 @@ public partial class AdminPage : System.Web.UI.Page
                // command = "CREATE TABLE "+cname+ " ( std_ID VARCHAR(8) NOT NULL, std_Name VARCHAR(80) NOT NULL ) ALTER TABLE"+cname+" ADD CONSTRAINT Student_"+cname+" FOREIGN KEY(std_ID) REFERENCES Student(std_ID) ON DELETE NO ACTIONON UPDATE NO ACTION ; ";
 
                 Response.Write("<script>alert('成功寫入')</script>");
+
             }
             catch
             {
@@ -229,5 +230,10 @@ public partial class AdminPage : System.Web.UI.Page
     protected void Back_Click(object sender, EventArgs e)
     {
         Response.Redirect("Default.aspx");
+    }
+
+    protected void Table_Click(object sender, EventArgs e)
+    {
+        Response.Write("<script> window.open('Signup.aspx', '_blank')</script>");
     }
 }

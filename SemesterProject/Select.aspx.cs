@@ -1,7 +1,11 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Data.SqlClient;
+using System.Globalization;
 using System.Linq;
+using System.Runtime.InteropServices;
+using System.Security.Policy;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
@@ -14,9 +18,7 @@ public partial class Select : System.Web.UI.Page
     // 選課頁面必為學生
     protected void Page_Load(object sender, EventArgs e)
     {
-
-        Label label = FindControl("text") as Label;
-
+        
         string  Session_ID = (string) Session["ID"];
 
 
@@ -26,17 +28,21 @@ public partial class Select : System.Web.UI.Page
             Response.Write("<script>alert('非法登入')</script>");
             Response.Redirect("Default.aspx");
         }
+        // 初始化學生課表
+        string[] lessons = myFunc.Get_Course_By_StdID(myFunc.Get_ID("Select std_ID from Student where Session_ID = '" + (string)Session["ID"] + "'", 1));
+        string[] ctime = myFunc.Get_CourseTime(lessons);
+        SetTable(ctime,lessons);
     }
     // Delete Course
     protected void Delete_Click(object sender, EventArgs e)
     {
         TextBox CID = FindControl("CID") as TextBox;
         string cid = CID.Text;
-        string std_id = Get_ID("Select std_ID from Student where Session_ID = '" + (string)Session["ID"] + "'", 1);
-        string pro_id = Get_ID("Select pro_ID from Courses where CID= '" + cid + "';", 2);
-        string adm_id = Get_ID("Select adm_ID from Courses where CID='" + cid + "';", 3);
+        string std_id = myFunc.Get_ID("Select std_ID from Student where Session_ID = '" + (string)Session["ID"] + "'", 1);
+        string pro_id = myFunc.Get_ID("Select pro_ID from Courses where CID= '" + cid + "';", 2);
+        string adm_id = myFunc.Get_ID("Select adm_ID from Courses where CID='" + cid + "';", 3);
 
-        if (!Is_Course_Exist(cid))
+        if (!myFunc.Is_Course_Exist(cid))
         {
             Response.Write("<script>alert('查無此課程 或 你根本沒選')</script>");
             return;
@@ -64,18 +70,18 @@ public partial class Select : System.Web.UI.Page
     {
         TextBox CID = FindControl("CID") as TextBox;
         string cid = CID.Text;
-        string std_id = Get_ID( "Select std_ID from Student where Session_ID = '" + (string)Session["ID"] + "'" , 1);
-        string pro_id = Get_ID("Select pro_ID from Courses where CID= '" + cid + "';",2);
-        string adm_id = Get_ID("Select adm_ID from Courses where CID='" + cid + "';", 3);
+        string std_id = myFunc.Get_ID( "Select std_ID from Student where Session_ID = '" + (string)Session["ID"] + "'" , 1);
+        string pro_id = myFunc.Get_ID("Select pro_ID from Courses where CID= '" + cid + "';",2);
+        string adm_id = myFunc.Get_ID("Select adm_ID from Courses where CID='" + cid + "';", 3);
 
         // 重複選課問題
-        if (Is_Course_Choosed(cid, std_id))
+        if (myFunc.Is_Course_Choosed(cid, std_id))
         {
             Response.Write("<script>alert('已選過該課程')</script>");
             return;
         }
         
-        if (!Is_Course_Exist(cid))
+        if (myFunc.Is_Course_Exist(cid))
         {
             Response.Write("<script>alert('查無此課程 ')</script>");
             return;
@@ -90,48 +96,25 @@ public partial class Select : System.Web.UI.Page
         // 學生:課程:教授 放入 課程池
         string command = "INSERT INTO [dbo].[Course_Pool] ([std_ID] ,[pro_ID] ,[CID] ,[adm_ID]) VALUES('"+std_id+"','"+pro_id+"','"+cid+"','"+adm_id+"');";
         SQL_cmd(command);
+
+
+        if (myFunc.Is_Course_Conflict(std_id))
+        {
+            Response.Write("<script>alert('該課程與其他已有課程衝堂')</script>");
+            CID.Text="";
+            command = "Delete From [dbo].[Course_Pool] where CID = '" + cid + "';";
+            SQL_cmd(command);
+            return;
+        }
+
         Response.Write("<script>alert('成功加入!')</script>");
 
         CID.Text = "";
 
-        return;
+        Response.Redirect("Select.aspx");
     }
 
 
-    public string Get_ID(string command,int status)
-    {
-        SqlConnection myConn;
-        myConn = new SqlConnection(strConn);
-        myConn.Open();
-        SqlCommand reader = new SqlCommand(command, myConn);
-        SqlDataReader data = reader.ExecuteReader();
-
-        string identify = "";
-        if (status == 1)
-            identify = "std_ID";
-        else if (status == 2)
-            identify = "pro_ID";
-        else if (status == 3)
-            identify = "adm_ID";
-
-        if (data.Read())
-        {
-            string id = data[identify].ToString();
-            data.Close();
-            reader.Dispose();
-            myConn.Close();
-            myConn.Dispose();
-            return id;
-        }
-        else
-        {
-            data.Close();
-            reader.Dispose();
-            myConn.Close();
-            myConn.Dispose();
-            return null;
-        }
-    }
     public bool Is_Session_Exist(string id)
     {
         string command = "";
@@ -176,59 +159,33 @@ public partial class Select : System.Web.UI.Page
 
     }
 
-    public bool Is_Course_Exist(string cid)
+    public void SetTable(string[] ctime, string[] course)
     {
+        // 使用者輸入=> 星期節數 : 01020304
+        // Label ID => C0502
+        //Response.Write((ctime.Length - 2) / 2);
+       // string[] time = new string[ ((ctime.Length - 2) / 2) *ctime.Length ]; // 算幾門課
+        
+        Label label = FindControl("Label1") as Label;
 
-        SqlConnection myConn;
-        myConn = new SqlConnection(strConn);
-        myConn.Open();
+        course = myFunc.Course_ID_Name_Change(course);
 
-        string command = "select count(1) from Courses where CID = '" + cid + "';";
-        SqlCommand scalar = new SqlCommand(command, myConn);
-
-        int CourseExist = (int)scalar.ExecuteScalar();
-
-        if (CourseExist == 0)
+        int end = 0;
+        for(int i=0; i<ctime.Length ; i++)
         {
-            scalar.Dispose();
-            myConn.Close();
-            myConn.Dispose();
-            return false;
+            for (int j = 2; j < ctime[i].Length; j += 2)
+            {
+                string time = "C" + ctime[i][0] + ctime[i][1] + ctime[i][j] + ctime[i][j + 1];
+
+                Label ct = FindControl(time) as Label;
+                ct.Text = course[i];
+
+            }
         }
-        else
-        {
-            scalar.Dispose();
-            myConn.Close();
-            myConn.Dispose();
-            return true;
-        }
+      
     }
 
-    public bool Is_Course_Choosed(string cid , string std_ID)
-    {
-        SqlConnection myConn;
-        myConn = new SqlConnection(strConn);
-        myConn.Open();
 
-        string command = "select count(1) from Course_Pool where (CID = '" + cid + "' AND std_ID = '" + std_ID + "');";
 
-        SqlCommand scalar = new SqlCommand(command, myConn);
 
-        int CourseChoose = (int)scalar.ExecuteScalar();
-
-        if (CourseChoose == 0)
-        {
-            scalar.Dispose();
-            myConn.Close();
-            myConn.Dispose();
-            return false;
-        }
-        else
-        {
-            scalar.Dispose();
-            myConn.Close();
-            myConn.Dispose();
-            return true;
-        }
-    }
 }
