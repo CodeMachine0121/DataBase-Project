@@ -17,11 +17,11 @@ public partial class _Default : System.Web.UI.Page
     public MyFunctions myfunc = new MyFunctions();
 
     protected void Page_Load(object sender, EventArgs e)
-    {    
+    {
 
-     // 辨認使用者 資料庫要再多新增一欄 放session -> H(Password)
+        // 辨認使用者 資料庫要再多新增一欄 放session -> H(Password)
 
-        Session["ID"] = myfunc.SHA256((string)Session.SessionID);
+       
 
     }
 
@@ -39,9 +39,12 @@ public partial class _Default : System.Web.UI.Page
 
         bool is_std=false, is_pro=false, is_adm = false;
         string strComm;
-        
 
-        if(name.Text.Trim(' ') == "" || password.Text.Trim(' ') == "") { Response.Write("<script>alert('賣亂')</script>"); }
+        Session["ID"] = myfunc.SHA256((string)Session.SessionID + name.Text);
+
+
+
+        if (name.Text.Trim(' ') == "" || password.Text.Trim(' ') == "") { Response.Write("<script>alert('賣亂')</script>"); }
         string Hash_password = myfunc.SHA256(password.Text);
         
         // 取得身分
@@ -81,14 +84,14 @@ public partial class _Default : System.Web.UI.Page
         if (is_std)
         {
            
-            Update_Session("UPDATE Student SET Session_ID = '" + Session["ID"] + "' where std_ID ='" + name.Text + "';");
+            Update_Session("UPDATE Student SET Session_ID = '" + (string)Session["ID"] + "' where std_ID ='" + name.Text + "';");
             Response.Redirect("Select.aspx");
         }
         else if (is_pro)
         {
            
            
-            Update_Session("UPDATE Professor SET Session_ID = '" + Session["ID"] + "' where pro_ID ='" + name.Text + "';");
+            Update_Session("UPDATE Professor SET Session_ID = '" + (string)Session["ID"] + "' where pro_ID ='" + name.Text + "';");
             Response.Redirect("Professor.aspx");
         }
         else if (is_adm)

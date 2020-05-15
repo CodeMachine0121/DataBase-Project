@@ -53,7 +53,7 @@ public partial class AdminPage : System.Web.UI.Page
         string ctime = CTime.Text;
         bool is_course_exist = Is_Course_Exist(cid);
 
-        string adm_id = Get_Admin_ID("select adm_ID from Admin where Session_ID = '" + (string)Session_ID + "';");
+        string adm_id =myFunc.Get_ID("select adm_ID from Admin where Session_ID = '" + (string)Session_ID + "';",2);
 
         if (adm_id == null)
         {
@@ -234,6 +234,6 @@ public partial class AdminPage : System.Web.UI.Page
 
     protected void Table_Click(object sender, EventArgs e)
     {
-        Response.Write("<script> window.open('Signup.aspx', '_blank')</script>");
+        Response.Write("<script> window.open('Table.aspx', '_blank')</script>");
     }
 }

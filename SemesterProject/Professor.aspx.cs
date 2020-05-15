@@ -67,13 +67,12 @@ public partial class Professor : System.Web.UI.Page
 
     public void SetTable(string[] ctime, string[] course)
     {
+        // string[] time = new string[ ((ctime.Length - 2) / 2) *ctime.Length ]; // 算幾門課     
         // 使用者輸入=> 星期節數 : 01020304
         // Label ID => C0502
         //Response.Write((ctime.Length - 2) / 2);
-        // string[] time = new string[ ((ctime.Length - 2) / 2) *ctime.Length ]; // 算幾門課
 
-        
-
+       
         course = myFunctions.Course_ID_Name_Change(course);
 
        
