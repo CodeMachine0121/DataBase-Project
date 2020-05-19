@@ -40,7 +40,7 @@ public partial class _Default : System.Web.UI.Page
         bool is_std=false, is_pro=false, is_adm = false;
         string strComm;
 
-        Session["ID"] = myfunc.SHA256((string)Session.SessionID + name.Text);
+        Session["ID"] = myfunc.SHA256((string)Session.SessionID +myfunc.Token());
 
 
 
