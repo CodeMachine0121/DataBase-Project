@@ -81,7 +81,7 @@ public partial class Select : System.Web.UI.Page
             return;
         }
         
-        if (myFunc.Is_Course_Exist(cid))
+        if (!myFunc.Is_Course_Exist(cid))
         {
             Response.Write("<script>alert('查無此課程 ')</script>");
             return;

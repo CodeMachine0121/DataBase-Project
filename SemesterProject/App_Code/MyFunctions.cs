@@ -20,6 +20,26 @@ public class MyFunctions
         //
     }
 
+    public string Token()
+    {
+        int length = 10;
+        // creating a StringBuilder object
+        StringBuilder str_build = new StringBuilder();
+        Random random = new Random();
+
+        char letter;
+        for(int i = 0; i < length; i++)
+        {
+            double flt = random.NextDouble();
+            int shift = Convert.ToInt32(Math.Floor(25 * flt));
+            letter = Convert.ToChar(shift + 65); // 'A'=65
+            str_build.Append(letter);
+        }
+        string token = str_build.ToString();
+
+        return token;
+        
+    }
     public string SHA256(string data)
     {
         byte[] bytes = Encoding.UTF8.GetBytes((string)data);

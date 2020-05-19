@@ -53,7 +53,7 @@ public partial class AdminPage : System.Web.UI.Page
         string ctime = CTime.Text;
         bool is_course_exist = Is_Course_Exist(cid);
 
-        string adm_id =myFunc.Get_ID("select adm_ID from Admin where Session_ID = '" + (string)Session_ID + "';",2);
+        string adm_id =myFunc.Get_ID("select adm_ID from Admin where Session_ID = '" + (string)Session_ID + "';",3);
 
         if (adm_id == null)
         {
