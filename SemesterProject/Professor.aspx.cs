@@ -34,7 +34,7 @@ public partial class Professor : System.Web.UI.Page
         SetTable(ctime, cid);
 
     }
-
+   
     public bool Is_Session_Exist(string id)
     {
         string command = "";
@@ -88,6 +88,16 @@ public partial class Professor : System.Web.UI.Page
             }
         }
 
+    }
+
+    protected void Back_Click(object sender, EventArgs e)
+    {
+        Response.Redirect("Default.aspx");
+    }
+
+    protected void Table_Click(object sender, EventArgs e)
+    {
+        Response.Write("<script> window.open('Table.aspx', '_blank')</script>");
     }
 
 }

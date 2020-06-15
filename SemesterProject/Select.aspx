@@ -33,9 +33,13 @@
                                 <asp:TextBox type="text" ID="CID" runat="server" class="form-control" placeholder="課程編號"></asp:TextBox>
                         </div>
                         <div class="d-flex flex-row align-items-center justify-content-between">
-                                <asp:Button ID="Confirm" class="btn btn-primary" runat="server" Text="確定" OnClick="Confirm_Click"  />
-                                 <asp:Button ID="Delete" class="btn btn-primary" runat="server" Text="刪除該課程" OnClick="Delete_Click" />         
-                         </div>
+                            <asp:Button ID="Confirm" class="btn btn-primary" runat="server" Text="確定" OnClick="Confirm_Click"  />
+                            <asp:Button ID="Delete" class="btn btn-primary" runat="server" Text="刪除" OnClick="Delete_Click" />         
+                         </div><br>
+                        <div class="d-flex flex-row align-items-center justify-content-between" >
+                           <asp:Button ID="Back" class="btn btn-primary" runat="server" Text="返回" OnClick="Back_Click" />
+                           <asp:Button ID="Table" runat="server" class="btn btn-primary" Text="課程表" OnClick="Table_Click" ></asp:Button>     
+                        </div>
                     </div>
                 </div>
 

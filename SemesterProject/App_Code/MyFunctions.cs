@@ -400,7 +400,107 @@ public class MyFunctions
         return false;
 
     }
+    //人數檢查
+    public bool Is_Course_Full(string cid)
+    { // true:滿 false:沒滿
+        bool flag = false;
+        SqlConnection myConn;
+        myConn = new SqlConnection(strConn);
+        myConn.Open();
 
+        string command = "select Climit,CAmount from Courses where CID = '" + cid + "';";
+        SqlCommand reader = new SqlCommand(command, myConn);
+        SqlDataReader data = reader.ExecuteReader();
+
+        if (data.Read())
+        {
+            int climit  =Int32.Parse( data["Climit"].ToString() );
+            int camount = Int32.Parse(data["CAmount"].ToString());
+
+            if (camount >= climit)
+                flag = true;
+        }
+
+        data.Close();
+        reader.Dispose();
+        myConn.Close();
+        myConn.Dispose();
+
+        return flag;
+    }
+    // 取得目前選課人數
+    private int Get_CAmount(string cid)
+    {
+        SqlConnection myConn;
+        myConn = new SqlConnection(strConn);
+        myConn.Open();
+
+        string command = "select CAmount from Courses where CID = '" + cid + "';";
+        SqlCommand reader = new SqlCommand(command, myConn);
+        SqlDataReader data = reader.ExecuteReader();
+
+        int camount = 0;
+        if (data.Read())
+        {
+          camount = Int32.Parse(data["CAmount"].ToString());
+        }
+
+        data.Close();
+        reader.Dispose();
+        myConn.Close();
+        myConn.Dispose();
+        return camount;
+    }
+    // 選課人數 ++
+    public bool Course_Amount_Plus(string cid)
+    {
+        SqlConnection myConn = new SqlConnection(strConn);
+        myConn.Open();
+        int camount = this.Get_CAmount(cid);
+
+        string strComm = "UPDATE [dbo].[Courses] SET [CAmount]="+(++camount).ToString() + " where cid = '"+cid+"';";
+        try
+        {
+            SqlCommand reader = new SqlCommand(strComm, myConn);
+
+            reader.ExecuteNonQuery();
+            reader.Dispose();
+            myConn.Close();
+            myConn.Dispose();
+
+        }
+        catch
+        {
+            return false;
+        }
+
+        return true;
+    }
+    // 選課人數 --
+    public bool Course_Amount_Minus(string cid)
+    {
+        SqlConnection myConn = new SqlConnection(strConn);
+        myConn.Open();
+        int camount = this.Get_CAmount(cid);
+
+        string strComm = "UPDATE [dbo].[Courses] SET [CAmount]=" + (--camount).ToString() + " where cid = '" + cid + "';";
+        try
+        {
+            SqlCommand reader = new SqlCommand(strComm, myConn);
+
+            reader.ExecuteNonQuery();
+            reader.Dispose();
+            myConn.Close();
+            myConn.Dispose();
+
+        }
+        catch
+        {
+            return false;
+        }
+
+        return true;
+    }
     // 課程ID -> 名稱
     public string[] Course_ID_Name_Change(string[] cid)
     {

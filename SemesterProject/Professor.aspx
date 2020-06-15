@@ -10,6 +10,12 @@
 <body>
     <form id="form1" runat="server">
         <div>
+             <div class="d-flex flex-row align-items-center justify-content-between">
+                                
+                                <asp:Button ID="Back" class="btn btn-primary" runat="server" Text="返回" OnClick="Back_Click" />
+                                <asp:Button ID="Table" runat="server" class="btn btn-primary" Text="課程表" OnClick="Table_Click" ></asp:Button> 
+                           
+            </div>
 
             <table BORDER="2" >
 	<tr align=center>

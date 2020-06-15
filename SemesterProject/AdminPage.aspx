@@ -56,7 +56,9 @@
                                 <asp:TextBox type="text" ID="Ccredit" runat="server" class="form-control" placeholder="學分"></asp:TextBox>
                             </div>
 
-                       
+                            <div class="form-group">
+                                <asp:TextBox type="text" ID="Climit" runat="server" class="form-control" placeholder="學生上限"></asp:TextBox>
+                            </div>
                             <div class="d-flex flex-row align-items-center justify-content-between">
                                 <asp:Button ID="CAdd" class="btn btn-primary" runat="server" Text="加入" OnClick="CAdd_Click" />
                                 <asp:Button ID="Back" class="btn btn-primary" runat="server" Text="返回" OnClick="Back_Click" />

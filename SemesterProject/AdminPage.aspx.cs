@@ -44,15 +44,19 @@ public partial class AdminPage : System.Web.UI.Page
         TextBox Croom = FindControl("Croom") as TextBox;
         TextBox Ccredit = FindControl("Ccredit") as TextBox;
         TextBox CTime = FindControl("CTime") as TextBox;
-            
+        TextBox CLimit = FindControl("CLimit") as TextBox;
+
         string cid = CID.Text;
         string cname = CName.Text;
         string cpro = CPro.Text;
         string croom = Croom.Text;
         string ccredit = Ccredit.Text;
         string ctime = CTime.Text;
-        bool is_course_exist = Is_Course_Exist(cid);
+        string climit = CLimit.Text;
+        string camount = "0";
 
+        bool is_course_exist = Is_Course_Exist(cid);
+       
         string adm_id =myFunc.Get_ID("select adm_ID from Admin where Session_ID = '" + (string)Session_ID + "';",3);
 
         if (adm_id == null)
@@ -72,7 +76,7 @@ public partial class AdminPage : System.Web.UI.Page
             try
             {
                 
-                string command = "INSERT INTO [dbo].[Courses]([adm_ID],[pro_ID],[CID],[Ctime] ,[Name],[Credit],[Classroom]) VALUES('"+adm_id+"','" + cpro + "','" + cid + "','" +ctime+"','"+ cname + "','" + ccredit + "','" + croom + "');";
+                string command = "INSERT INTO [dbo].[Courses]([adm_ID],[pro_ID],[CID],[Ctime],[Climit],[CAmount] ,[Name],[Credit],[Classroom]) VALUES('"+adm_id+"','" + cpro + "','" + cid + "','" +ctime+"','"+climit+"','"+ camount+ "','"+ cname + "','" + ccredit + "','" + croom + "');";
                 SQL_cmd(command);
 
                 // 需額外新增 Table 紀錄有哪些學生  [*] 使用關聯性來帶入 Function 在 選課page
@@ -111,9 +115,6 @@ public partial class AdminPage : System.Web.UI.Page
         try
         {
             string command = "DELETE FROM [dbo].[Courses] WHERE CID = '" + cid + "';";
-            SQL_cmd(command);
-
-            command = "DROP TABLE " + cname + ";";
             SQL_cmd(command);
             Response.Write("<script>alert('成功移除該課程')</script>");
         }

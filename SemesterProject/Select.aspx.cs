@@ -53,6 +53,8 @@ public partial class Select : System.Web.UI.Page
             Response.Write("<script>alert('資料庫發生錯誤 歹勢啦')</script>");
             return;
         }
+        // 扣除人數
+        myFunc.Course_Amount_Minus(cid);
 
         // 學生:課程:教授 放入 課程池
         string command = "DELETE FROM [dbo].[Course_Pool] WHERE (CID='"+cid+"' AND std_ID='"+std_id+"');";
@@ -60,7 +62,7 @@ public partial class Select : System.Web.UI.Page
         Response.Write("<script>alert('成功移除!')</script>");
 
         CID.Text = "";
-
+        Response.Redirect("Select.aspx");
         return;
 
     }
@@ -93,6 +95,17 @@ public partial class Select : System.Web.UI.Page
             return;
         }
 
+        // 確定人數是否已滿
+        if(myFunc.Is_Course_Full(cid))
+        {
+            Response.Write("<script>alert('該課人數已滿')</script>");
+            return;
+        }
+        else
+        {
+            myFunc.Course_Amount_Plus(cid);
+        }
+
         // 學生:課程:教授 放入 課程池
         string command = "INSERT INTO [dbo].[Course_Pool] ([std_ID] ,[pro_ID] ,[CID] ,[adm_ID]) VALUES('"+std_id+"','"+pro_id+"','"+cid+"','"+adm_id+"');";
         SQL_cmd(command);
@@ -114,6 +127,15 @@ public partial class Select : System.Web.UI.Page
         Response.Redirect("Select.aspx");
     }
 
+    protected void Back_Click(object sender, EventArgs e)
+    {
+        Response.Redirect("Default.aspx");
+    }
+
+    protected void Table_Click(object sender, EventArgs e)
+    {
+        Response.Write("<script> window.open('Table.aspx', '_blank')</script>");
+    }
 
     public bool Is_Session_Exist(string id)
     {
