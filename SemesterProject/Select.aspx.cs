@@ -108,7 +108,7 @@ public partial class Select : System.Web.UI.Page
         }
 
 
-        if (myFunc.Is_Course_Conflict(std_id))
+        if (myFunc.Is_Course_Conflict(std_id,cid))
         {
             Response.Write("<script>alert('該課程與其他已有課程衝堂')</script>");
             CID.Text = "";
