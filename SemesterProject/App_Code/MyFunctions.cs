@@ -453,13 +453,20 @@ public class MyFunctions
         //想選的課
         string ctime = this.Get_CourseTime(cid);
         //Hashtable hashtable = new Hashtable();
-
+        // 01010203 vs 01020304
+        
         for (int i = 0; i < Ctime.Length; i++)
         {
-            if (Ctime[i].Contains(ctime))
+            int counter = 0;
+            for (int j=1;j<ctime.ToCharArray().Length; j+=2)
             {
-                return true;
+                if (ctime[j] == Ctime[i][j])
+                {
+                    counter++;
+                }
             }
+            if (counter > 1)
+                return true;
         }
         return false;
 
