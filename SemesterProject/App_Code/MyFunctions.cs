@@ -445,7 +445,7 @@ public class MyFunctions
     }
     
     // 衝堂檢查
-    public bool Is_Course_Conflict(string std_ID,string cid)
+     public bool Is_Course_Conflict(string std_ID,string cid)
     {
        
         string[] CID = this.Get_Course_By_StdID (std_ID);
@@ -454,19 +454,32 @@ public class MyFunctions
         string ctime = this.Get_CourseTime(cid);
         //Hashtable hashtable = new Hashtable();
         // 01010203 vs 01020304
-        
+        string cl = "";
+        for (int i = 2; i < ctime.Length; i++)
+            cl += ctime[i];
+
+
         for (int i = 0; i < Ctime.Length; i++)
         {
             int counter = 0;
-            for (int j=1;j<ctime.ToCharArray().Length; j+=2)
+            string CL = "";
+            for (int j = 2; i < ctime.Length; i++)
+                CL += ctime[i];
+
+            if((Ctime[i][0].ToString() + Ctime[i][1].ToString()) == (ctime[0].ToString() + ctime[1].ToString()))
             {
-                if (ctime[j] == Ctime[i][j])
+
+                for (int j = 1; j < ctime.ToCharArray().Length; j += 2)
                 {
-                    counter++;
+                    if (cl[j] == CL[j])
+                    {
+                        counter++;
+                    }
                 }
+                if (counter != 0)
+                    return true;
             }
-            if (counter > 1)
-                return true;
+
         }
         return false;
 
