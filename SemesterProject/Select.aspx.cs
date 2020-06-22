@@ -59,7 +59,7 @@ public partial class Select : System.Web.UI.Page
         // 學生:課程:教授 放入 課程池
         string command = "DELETE FROM [dbo].[Course_Pool] WHERE (CID='"+cid+"' AND std_ID='"+std_id+"');";
         SQL_cmd(command);
-        myFunc.UPDATE_Total_Credit(std_id, cid, true);
+        myFunc.UPDATE_Total_Credit(std_id, cid, false);
         Response.Write("<script>alert('成功移除!')</script>");
 
         CID.Text = "";

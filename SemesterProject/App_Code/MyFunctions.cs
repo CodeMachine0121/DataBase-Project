@@ -166,7 +166,7 @@ public class MyFunctions
 
         //--------------------------------
         //目前總學分
-        command = "select total_Credit from Courses where ( std_ID = '" + ID + "');";
+        command = "select total_Credit from Student where ( std_ID = '" + ID + "');";
 
         reader = new SqlCommand(command, myConn);
         data = reader.ExecuteReader();
@@ -178,9 +178,9 @@ public class MyFunctions
         //----------------------------------
         // 加起來
         if(flag)
-            command = "UPDATE [dbo].[Students] SET [total_Credit]=" + (total_credit+credit).ToString() + " where stdID = '" + ID + "';";
+            command = "UPDATE [dbo].[Student] SET [total_Credit]=" + (total_credit+credit).ToString() + " where std_ID = '" + ID + "';";
         else
-            command = "UPDATE [dbo].[Students] SET [total_Credit]=" + (total_credit - credit).ToString() + " where stdID = '" + ID + "';";
+            command = "UPDATE [dbo].[Student] SET [total_Credit]=" + (total_credit - credit).ToString() + " where std_ID = '" + ID + "';";
 
         reader = new SqlCommand(command, myConn);
 
@@ -255,7 +255,26 @@ public class MyFunctions
         myConn.Dispose();
         return ctime;
     }
+    public string Get_CourseTime(string cid)
+    {
+        string ctime = "";
+        SqlConnection myConn;
+        myConn = new SqlConnection(strConn);
+        myConn.Open();
+        string command = "select Ctime from Courses where CID = '" + cid + "';";
+        SqlCommand reader = new SqlCommand(command, myConn);
+        SqlDataReader data = reader.ExecuteReader();
 
+        if (data.Read())
+        {
+            ctime = data["Ctime"].ToString();
+        }
+        data.Close();
+        reader.Dispose();
+        myConn.Close();
+        myConn.Dispose();
+        return ctime;
+    }
 
     // 透過課程標號 取得 教授名稱
     public string[] Get_Professor_Name(string[] cid)
@@ -426,23 +445,20 @@ public class MyFunctions
     }
     
     // 衝堂檢查
-    public bool Is_Course_Conflict(string std_ID)
+    public bool Is_Course_Conflict(string std_ID,string cid)
     {
        
         string[] CID = this.Get_Course_By_StdID (std_ID);
         string[] Ctime =this.Get_CourseTime(CID);
-
-        Hashtable hashtable = new Hashtable();
+        //想選的課
+        string ctime = this.Get_CourseTime(cid);
+        //Hashtable hashtable = new Hashtable();
 
         for (int i = 0; i < Ctime.Length; i++)
         {
-            if (hashtable.Contains(Ctime[i]))
+            if (Ctime[i].Contains(ctime))
             {
                 return true;
-            }
-            else
-            {
-                hashtable.Add(Ctime[i], Ctime[i]);
             }
         }
         return false;
