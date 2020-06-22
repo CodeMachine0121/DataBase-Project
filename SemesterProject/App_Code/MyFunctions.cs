@@ -142,7 +142,55 @@ public class MyFunctions
         myConn.Dispose();
         return cid;
     }
+    // 更新學生總學分
+    public bool UPDATE_Total_Credit(string ID,string CID,bool flag)
+    {
+        int credit=0;
+        int total_credit = 0;
+        string command;
+        SqlConnection myConn;
+        myConn = new SqlConnection(strConn);
+        myConn.Open();
 
+        // how many courses had the student choosen
+
+        command = "select Credit from Courses where ( CID = '" + CID + "');";
+
+        SqlCommand reader = new SqlCommand(command, myConn);
+        SqlDataReader data = reader.ExecuteReader();
+        if (data.Read())
+            credit = Int32.Parse(data["Credit"].ToString());
+        data.Close();
+        reader.Dispose();
+
+
+        //--------------------------------
+        //目前總學分
+        command = "select total_Credit from Courses where ( std_ID = '" + ID + "');";
+
+        reader = new SqlCommand(command, myConn);
+        data = reader.ExecuteReader();
+        if (data.Read())
+            total_credit = Int32.Parse(data["total_Credit"].ToString());
+        data.Close();
+        reader.Dispose();
+
+        //----------------------------------
+        // 加起來
+        if(flag)
+            command = "UPDATE [dbo].[Students] SET [total_Credit]=" + (total_credit+credit).ToString() + " where stdID = '" + ID + "';";
+        else
+            command = "UPDATE [dbo].[Students] SET [total_Credit]=" + (total_credit - credit).ToString() + " where stdID = '" + ID + "';";
+
+        reader = new SqlCommand(command, myConn);
+
+        reader.ExecuteNonQuery();
+        reader.Dispose();
+        myConn.Close();
+        myConn.Dispose();
+        return true;
+    }
+    // 課程池取學生
     public string[] Get_Course_By_StdID(string ID)
     {
         

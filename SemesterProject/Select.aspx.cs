@@ -59,6 +59,7 @@ public partial class Select : System.Web.UI.Page
         // 學生:課程:教授 放入 課程池
         string command = "DELETE FROM [dbo].[Course_Pool] WHERE (CID='"+cid+"' AND std_ID='"+std_id+"');";
         SQL_cmd(command);
+        myFunc.UPDATE_Total_Credit(std_id, cid, true);
         Response.Write("<script>alert('成功移除!')</script>");
 
         CID.Text = "";
@@ -106,19 +107,19 @@ public partial class Select : System.Web.UI.Page
             myFunc.Course_Amount_Plus(cid);
         }
 
+
+        if (myFunc.Is_Course_Conflict(std_id))
+        {
+            Response.Write("<script>alert('該課程與其他已有課程衝堂')</script>");
+            CID.Text = "";
+            return;
+        }
         // 學生:課程:教授 放入 課程池
         string command = "INSERT INTO [dbo].[Course_Pool] ([std_ID] ,[pro_ID] ,[CID] ,[adm_ID]) VALUES('"+std_id+"','"+pro_id+"','"+cid+"','"+adm_id+"');";
         SQL_cmd(command);
 
 
-        if (myFunc.Is_Course_Conflict(std_id))
-        {
-            Response.Write("<script>alert('該課程與其他已有課程衝堂')</script>");
-            CID.Text="";
-            command = "Delete From [dbo].[Course_Pool] where CID = '" + cid + "';";
-            SQL_cmd(command);
-            return;
-        }
+        myFunc.UPDATE_Total_Credit(std_id,cid,true);
 
         Response.Write("<script>alert('成功加入!')</script>");
 
